@@ -33,21 +33,26 @@ st.title("🏗️ BIS Standard Recommendation System")
 # 🔍 Input
 query = st.text_input("Enter product description:")
 
-# 🚀 Search
-if query:
-    with st.spinner("⚡ Searching..."):
-        results = search(query)
-
-    st.success("⚡ Results loaded instantly")
-
-    if len(results) == 0:
-        st.warning("No results found")
+# 🔘 Button
+if st.button("🚀 Get Recommendations"):
+    
+    if not query:
+        st.warning("Please enter a query first")
+    
     else:
-        for r in results:
-            st.markdown(f"""
-            <div class="card">
-                <h4>{r['standard_id']} - {r['title']}</h4>
-                <p><b>Scope:</b> {r['scope']}</p>
-                <p><b>Why Relevant:</b> {r['reason']}</p>
-            </div>
-            """, unsafe_allow_html=True)
+        with st.spinner("⚡ Searching..."):
+            results = search(query)
+
+        st.success("⚡ Results loaded")
+
+        if len(results) == 0:
+            st.warning("No results found")
+        else:
+            for r in results:
+                st.markdown(f"""
+                <div class="card">
+                    <h4>{r['standard_id']} - {r['title']}</h4>
+                    <p><b>Scope:</b> {r['scope']}</p>
+                    <p><b>Why Relevant:</b> {r['reason']}</p>
+                </div>
+                """, unsafe_allow_html=True)
