@@ -3,3 +3,4 @@ numpy
 sentence-transformers
 streamlit
 openai
+google-generativeai
