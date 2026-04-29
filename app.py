@@ -1,6 +1,7 @@
 import streamlit as st
 from query import search
 import os
+import time
 
 # 🔥 Page config
 st.set_page_config(page_title="BIS AI", layout="wide")
@@ -40,11 +41,28 @@ if st.button("🚀 Get Recommendations"):
         st.warning("Please enter a query first")
     
     else:
-        with st.spinner("⚡ Searching..."):
-            results = search(query)
+        # 🔥 Premium loading animation
+        status = st.empty()
+        progress = st.progress(0)
 
-        st.success("⚡ Results loaded")
+        status.markdown("🔍 Analyzing product description...")
 
+        for i in range(1, 101):
+            progress.progress(i)
+            time.sleep(0.01)  # smooth animation
+
+            if i == 40:
+                status.markdown("⚡ Matching with BIS standards...")
+            elif i == 80:
+                status.markdown("📊 Generating recommendations...")
+
+        # 🔍 Actual search
+        results = search(query)
+
+        progress.empty()
+        status.success("🚀 Results ready!")
+
+        # 📊 Show results
         if len(results) == 0:
             st.warning("No results found")
         else:
