@@ -12,7 +12,7 @@ if API_KEY:
 # 🔥 Page config
 st.set_page_config(page_title="BIS AI", layout="wide")
 
-# 🎨 UI
+# 🎨 UI Styling
 st.markdown("""
 <style>
 .stApp { background-color: #f5f7fa; }
@@ -30,7 +30,7 @@ st.markdown("""
 if not os.path.exists("faiss_index.bin"):
     os.system("python embed.py")
 
-# 🤖 AI FUNCTION (FINAL STRONG)
+# 🤖 AI FUNCTION (FINAL POLISHED)
 def generate_answer(query, context):
     try:
         api_key = os.getenv("GEMINI_API_KEY")
@@ -42,36 +42,51 @@ def generate_answer(query, context):
         model = genai.GenerativeModel("gemini-1.5-flash")
 
         prompt = f"""
-        You are a civil engineering expert.
+        You are a professional civil engineering expert.
 
         User Query: {query}
 
         BIS Standards:
         {context}
 
-        Explain in PROFESSIONAL English:
-        - Why these standards are relevant
-        - Real-world usage
-        - Importance in safety and compliance
+        Write a clear and correct English explanation.
 
-        Do NOT repeat the query.
-        Do NOT use Hinglish.
-        Give a clean and technical explanation.
+        Rules:
+        - No spelling mistakes
+        - No Hinglish
+        - Do NOT repeat the query
+        - Explain practical usage
+        - Explain safety and compliance importance
+        - Keep it short (3-4 lines)
+
+        Answer:
         """
 
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.2,
+                "top_p": 0.9,
+                "max_output_tokens": 300
+            }
+        )
 
         if not response.text:
             return "❌ EMPTY RESPONSE"
 
-        return response.text.strip()
+        text = response.text.strip()
+
+        # 🔧 minor cleanup (safety)
+        text = text.replace("constructionnt", "construction").replace("cein", "cement")
+
+        return text
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
 
 # 🔥 Title
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("Get BIS standards + AI explanation")
+st.caption("Get BIS standards + professional AI explanation")
 
 # 🔍 Input
 query = st.text_input("Enter product description:")
@@ -121,16 +136,16 @@ if st.button("🚀 Get Recommendations"):
 
             # 🧠 Better context
             context = "\n".join([
-                f"{r['standard_id']} - {r['title']}: {r['scope']}"
+                f"{r['standard_id']} ({r['title']}) - {r['scope']}"
                 for r in results[:3]
             ])
 
-            # 🤖 AI
+            # 🤖 AI explanation
             ai_answer = generate_answer(clean_query, context)
 
-            # 🔁 fallback
+            # 🔁 fallback (demo safe)
             if "❌" in ai_answer:
-                ai_answer = f"These standards ensure quality, safety and compliance for {clean_query}."
+                ai_answer = f"These standards ensure quality, safety and compliance in construction."
 
             st.subheader("🤖 AI Explanation")
             st.write(ai_answer)
