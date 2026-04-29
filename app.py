@@ -5,7 +5,8 @@ import time
 import google.generativeai as genai 
 
 # 🔥 Gemini API key
-genai.configure(api_key="AIzaSyDHm0l2nMItkGij99jWf5Fq_r8FcLi7Ry0")  
+import os
+genai.configure(api_key=os.getenv("AIzaSyDHm0l2nMItkGij99jWf5Fq_r8FcLi7Ry0"))
 
 # 🔥 Page config
 st.set_page_config(page_title="BIS AI", layout="wide")
