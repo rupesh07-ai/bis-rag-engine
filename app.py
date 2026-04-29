@@ -5,18 +5,18 @@ import time
 import google.generativeai as genai
 
 # ─────────────────────────────────────────
-# 🔐 API KEY LOADING — Streamlit-safe
+# 🔐 API KEY LOADING
 # ─────────────────────────────────────────
 def get_api_key():
-    # 1️⃣ Streamlit secrets (recommended for Streamlit Cloud)
     try:
         return st.secrets["GEMINI_API_KEY"]
     except Exception:
         pass
-    # 2️⃣ Environment variable (local dev)
+
     key = os.getenv("GEMINI_API_KEY")
     if key:
         return key
+
     return None
 
 API_KEY = get_api_key()
@@ -31,12 +31,8 @@ st.set_page_config(page_title="BIS AI Assistant", layout="wide", page_icon="🏗
 # ─────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
+.stApp { background: #f0f2f6; }
 
-html, body, .stApp {
-    background: #f0f2f6;
-    font-family: 'IBM Plex Sans', sans-serif;
-}
 .card {
     background: white;
     padding: 18px 22px;
@@ -45,14 +41,17 @@ html, body, .stApp {
     border-left: 4px solid #2563eb;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
-.card h4 { color: #1e40af; margin-bottom: 6px; }
+
+.card h4 { color: #1e40af; }
+
 .ai-box {
     background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border: 1px solid #93c5fd;
     border-radius: 12px;
-    padding: 18px 22px;
+    padding: 18px;
     margin-top: 16px;
 }
+
 .error-box {
     background: #fef2f2;
     border: 1px solid #fca5a5;
@@ -67,145 +66,121 @@ html, body, .stApp {
 # 🧠 FAISS Index Check
 # ─────────────────────────────────────────
 if not os.path.exists("faiss_index.bin"):
-    with st.spinner("Building search index..."):
+    with st.spinner("Building index..."):
         os.system("python embed.py")
 
 # ─────────────────────────────────────────
-# 🤖 AI GENERATION — No fake fallback
+# 🤖 AI FUNCTION (FINAL FIXED)
 # ─────────────────────────────────────────
-def generate_answer(query: str, context: str) -> tuple[str, bool]:
-    """
-    Returns (answer_text, success_bool)
-    No silent fallback — real errors shown to user.
-    """
+def generate_answer(query, context):
+
     api_key = get_api_key()
 
     if not api_key:
-        return (
-            "**API Key Missing!**\n\n"
-            "Add `GEMINI_API_KEY` to:\n"
-            "- `.streamlit/secrets.toml` → `GEMINI_API_KEY = 'your-key'`\n"
-            "- OR as environment variable",
-            False
-        )
+        return "❌ API KEY NOT FOUND", False
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
 
-        prompt = f"""You are a senior civil engineering expert specializing in Indian BIS standards.
+        # ✅ FIXED MODEL
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash-latest")
+        except:
+            model = genai.GenerativeModel("gemini-pro")
+
+        prompt = f"""
+You are a civil engineering expert.
 
 User Query: {query}
 
-Relevant BIS Standards Found:
+BIS Standards:
 {context}
 
-Your Task:
-1. Explain which standard applies and WHY it matters for this use case
-2. Mention key specification requirements (grade, strength, tolerances)
-3. State the safety/compliance importance in Indian construction context
-4. Keep it professional, precise, 4-5 lines
+Explain:
+- Why each standard is relevant
+- Real-world usage
+- Safety importance
 
 Rules:
-- Write in clean English only
-- No repetition of the query
-- No generic filler phrases
-- Cite the standard numbers (IS XXXX) when relevant
-
-Answer:"""
+- Use clean English
+- Mention IS numbers
+- No generic answers
+- Keep it 4-5 lines
+"""
 
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.3,
-                top_p=0.92,
-                max_output_tokens=400,
+                top_p=0.9,
+                max_output_tokens=400
             )
         )
 
-        # Proper response validation
         if not response.candidates:
-            return "Model returned no candidates. Try rephrasing your query.", False
-
-        finish_reason = response.candidates[0].finish_reason
-        if finish_reason.name not in ("STOP", "MAX_TOKENS"):
-            return f"Generation stopped: {finish_reason.name}. Query may be filtered.", False
+            return "❌ No response from model", False
 
         text = response.text.strip()
+
         if not text:
-            return "Empty response received. Please try again.", False
+            return "❌ Empty response", False
 
         return text, True
 
-    except genai.types.BlockedPromptException:
-        return "Query was blocked by safety filters. Try rephrasing.", False
     except Exception as e:
-        return f"API Error: {type(e).__name__}: {str(e)}", False
+        return f"❌ API Error: {str(e)}", False
 
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ BIS Compliance AI Assistant")
-st.caption("Powered by Gemini 1.5 Flash + FAISS semantic search")
+st.caption("Powered by Gemini LLM + FAISS search")
 
-# API key status indicator
+# API key status
 if not API_KEY:
-    st.error("⚠️ GEMINI_API_KEY not found. Add it to `.streamlit/secrets.toml`")
+    st.error("⚠️ GEMINI_API_KEY missing")
 else:
-    st.success("✅ API Key loaded", icon="🔑")
+    st.success("API Key Loaded")
 
 st.divider()
 
-col1, col2 = st.columns([3, 1])
-with col1:
-    query = st.text_input(
-        "🔍 Enter product / material description:",
-        placeholder="e.g. cement for RCC construction"
-    )
+query = st.text_input("Enter product description:")
 
-with col2:
-    top_k = st.selectbox("Show results:", [3, 5, 10], index=0)
+if st.button("🚀 Search"):
 
-# Example chips
-st.markdown("**💡 Try these:**")
-examples = ["cement for building construction", "steel bars for reinforcement", "concrete mix for bridges", "clay bricks for walls"]
-cols = st.columns(4)
-for i, ex in enumerate(examples):
-    if cols[i].button(ex, key=f"ex_{i}"):
-        query = ex
+    if not query:
+        st.warning("Enter something first")
 
-st.divider()
-
-if st.button("🚀 Search & Analyse", type="primary", disabled=not query):
-    with st.spinner("Searching BIS database..."):
-        results = search(query)
-
-    if not results:
-        st.warning("No matching BIS standards found. Try different keywords.")
     else:
-        st.subheader(f"📋 Top {min(top_k, len(results))} Matching Standards")
+        with st.spinner("Searching..."):
+            results = search(query)
 
-        for r in results[:top_k]:
-            st.markdown(f"""
-            <div class="card">
-                <h4>📌 {r['standard_id']} — {r['title']}</h4>
-                <p><b>Scope:</b> {r['scope']}</p>
-                <p><b>Why Relevant:</b> {r['reason']}</p>
-            </div>
-            """, unsafe_allow_html=True)
+        if not results:
+            st.warning("No results found")
 
-        # Build rich context for AI
-        context = "\n".join([
-            f"- {r['standard_id']} ({r['title']}): {r['scope']}"
-            for r in results[:top_k]
-        ])
-
-        st.subheader("🤖 AI Expert Analysis")
-
-        with st.spinner("Generating expert explanation..."):
-            ai_answer, success = generate_answer(query, context)
-
-        if success:
-            st.markdown(f'<div class="ai-box">{ai_answer}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="error-box">⚠️ {ai_answer}</div>', unsafe_allow_html=True)
+            # Show results
+            for r in results[:3]:
+                st.markdown(f"""
+                <div class="card">
+                    <h4>{r['standard_id']} - {r['title']}</h4>
+                    <p><b>Scope:</b> {r['scope']}</p>
+                    <p><b>Why Relevant:</b> {r['reason']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Context
+            context = "\n".join([
+                f"{r['standard_id']} ({r['title']}): {r['scope']}"
+                for r in results[:3]
+            ])
+
+            st.subheader("🤖 AI Expert Analysis")
+
+            with st.spinner("Generating explanation..."):
+                answer, ok = generate_answer(query, context)
+
+            if ok:
+                st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="error-box">{answer}</div>', unsafe_allow_html=True)
