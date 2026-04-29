@@ -33,20 +33,21 @@ if len(texts) == 0:
 # Load model
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Generate embeddings
-embeddings = model.encode(texts)
+# 🔥 Generate normalized embeddings (FAST + BETTER)
+embeddings = model.encode(texts, normalize_embeddings=True)
 
-# Convert to float32 (FAISS requirement)
+# Convert to float32
 embeddings = np.array(embeddings).astype("float32")
 
 # Save embeddings
 np.save("embeddings.npy", embeddings)
 
-# Create FAISS index
+# 🔥 Create FAISS index (COSINE SIMILARITY → FAST)
 dimension = embeddings.shape[1]
-index = faiss.IndexFlatL2(dimension)
+index = faiss.IndexFlatIP(dimension)
 index.add(embeddings)
 
+# Save index
 faiss.write_index(index, "faiss_index.bin")
 
 # Save mapping
