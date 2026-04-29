@@ -4,7 +4,7 @@ import os
 import time
 import google.generativeai as genai
 
-# 🔐 Load API key from Streamlit Secrets
+# 🔐 Load API key (Streamlit Secrets)
 API_KEY = os.getenv("GEMINI_API_KEY")
 if API_KEY:
     genai.configure(api_key=API_KEY)
@@ -12,12 +12,10 @@ if API_KEY:
 # 🔥 Page config
 st.set_page_config(page_title="BIS AI", layout="wide")
 
-# 🎨 UI Styling
+# 🎨 UI CSS
 st.markdown("""
 <style>
-.stApp {
-    background-color: #f5f7fa;
-}
+.stApp { background-color: #f5f7fa; }
 .card {
     background: white;
     padding: 15px;
@@ -28,35 +26,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 🧠 Ensure FAISS index exists
+# 🧠 Ensure index exists
 if not os.path.exists("faiss_index.bin"):
     os.system("python embed.py")
 
-# 🤖 Gemini AI Function (Improved Prompt)
+# 🤖 Gemini AI (STRONG VERSION)
 def generate_answer(query, context):
     try:
         api_key = os.getenv("GEMINI_API_KEY")
-
         if not api_key:
             return "❌ API KEY NOT FOUND"
 
         genai.configure(api_key=api_key)
-
         model = genai.GenerativeModel("gemini-pro")
 
         prompt = f"""
-        You are an expert in BIS standards.
+        You are a civil engineering expert specializing in BIS standards.
 
-        User query: {query}
-        Relevant BIS standards:
+        User Query: {query}
+
+        Relevant BIS Standards:
         {context}
 
-        Explain:
-        1. Why these standards match the product
-        2. Where they are used in real construction
-        3. Why they are important for safety and compliance
+        Explain clearly:
+        1. Why each standard is relevant
+        2. Where it is used in real construction
+        3. Why it is important for safety and compliance
 
-        Give a clear and practical explanation (4-5 lines).
+        Make the answer practical, specific and NOT generic.
         """
 
         response = model.generate_content(prompt)
@@ -64,16 +61,23 @@ def generate_answer(query, context):
         if not response.text:
             return "❌ EMPTY RESPONSE"
 
-        return response.text
+        return response.text.strip()
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
 
 # 🔥 Title
-st.title("🏗️ BIS Standard Recommendation System")
+st.title("🏗️ AI-Powered BIS Compliance Assistant")
+st.caption("Get instant BIS standards with AI explanation")
 
 # 🔍 Input
 query = st.text_input("Enter product description:")
+
+# 💡 Examples
+st.markdown("### 💡 Try:")
+st.write("• cement for building construction")
+st.write("• steel bars for reinforcement")
+st.write("• concrete mix for bridges")
 
 # 🔘 Button
 if st.button("🚀 Get Recommendations"):
@@ -107,8 +111,8 @@ if st.button("🚀 Get Recommendations"):
             st.warning("No results found")
 
         else:
-            # 📊 Show standards
-            for r in results:
+            # 📊 Show top 5
+            for r in results[:5]:
                 st.markdown(f"""
                 <div class="card">
                     <h4>{r['standard_id']} - {r['title']}</h4>
@@ -117,20 +121,20 @@ if st.button("🚀 Get Recommendations"):
                 </div>
                 """, unsafe_allow_html=True)
 
-            # 🧠 Better context for AI
+            # 🧠 Strong context
             context = "\n".join([
                 f"{r['standard_id']} - {r['title']}: {r['scope']}"
-                for r in results
+                for r in results[:5]
             ])
 
-            # 🤖 AI explanation
+            # 🤖 AI Explanation
             ai_answer = generate_answer(query, context)
 
             # 🔁 Fallback (demo safe)
             if "❌" in ai_answer:
                 ai_answer = f"""
-                These standards are relevant to '{query}' because they define quality,
-                safety, and proper usage guidelines in construction materials and structures.
+                These standards are relevant to '{query}' as they ensure
+                quality, safety, and proper construction practices.
                 """
 
             st.subheader("🤖 AI Explanation")
