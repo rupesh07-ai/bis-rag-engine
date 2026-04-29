@@ -21,4 +21,4 @@ if query:
         for r in results:
     st.write(f"### {r['standard_id']} - {r['title']}")
     st.write(r["scope"])
-    st.write("👉", r["reason"])  
+    st.write("👉", r["reason"])
