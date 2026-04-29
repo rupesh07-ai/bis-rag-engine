@@ -26,11 +26,11 @@ def search(query, top_k=3):
     seen = set()
     results = []
 
-    for i in indices[0]:
-        item = data[i]
-        if item["standard_id"] not in seen:
-            item["reason"] = generate_reason(query, item)
-            results.append(item)
-            seen.add(item["standard_id"])
+   for i in indices[0]:
+    item = data[i]
+    if item["standard_id"] not in seen:
+        item["reason"] = f"Relevant because it relates to {item['title']} used in {query}"
+        results.append(item)
+        seen.add(item["standard_id"])
 
     return results
