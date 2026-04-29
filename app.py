@@ -71,7 +71,7 @@ if not os.path.exists("faiss_index.bin"):
         os.system("python embed.py")
 
 # ─────────────────────────────────────────
-# 🤖 AI FUNCTION (FINAL FIXED)
+# 🤖 AI FUNCTION (FINAL STABLE)
 # ─────────────────────────────────────────
 def generate_answer(query, context):
 
@@ -84,7 +84,7 @@ def generate_answer(query, context):
         genai.configure(api_key=api_key)
 
         # ✅ FINAL STABLE MODEL
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-1.0-pro")
 
         prompt = f"""
 You are a civil engineering expert.
@@ -125,7 +125,7 @@ Rules:
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ BIS Compliance AI Assistant")
-st.caption("Powered by Gemini LLM + FAISS Search")
+st.caption("Powered by Gemini 1.0 Pro + FAISS Search")
 
 if not API_KEY:
     st.error("⚠️ GEMINI_API_KEY missing")
