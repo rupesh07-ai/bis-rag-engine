@@ -19,5 +19,6 @@ if query:
         st.warning("No results found")
     else:
         for r in results:
-            st.write(f"### {r['standard_id']} - {r['title']}")
-            st.write(r["scope"])
+    st.write(f"### {r['standard_id']} - {r['title']}")
+    st.write(r["scope"])
+    st.write("👉", r["reason"])  
