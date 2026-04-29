@@ -1,0 +1,36 @@
+import faiss
+import json
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+# Load model
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Load index
+index = faiss.read_index("faiss_index.bin")
+
+# Load data
+with open("data/mapping.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+
+def generate_reason(query, item):
+    # Simple rule-based reason (no API needed)
+    return f"This standard is relevant because it relates to {item['title']} used in {query}"
+
+
+def search(query, top_k=3):
+    query_vec = model.encode([query]).astype("float32")
+    distances, indices = index.search(query_vec, top_k)
+
+    seen = set()
+    results = []
+
+    for i in indices[0]:
+        item = data[i]
+        if item["standard_id"] not in seen:
+            item["reason"] = generate_reason(query, item)
+            results.append(item)
+            seen.add(item["standard_id"])
+
+    return results
