@@ -1,7 +1,6 @@
 import streamlit as st
 from query import search
 import os
-import time
 import google.generativeai as genai
 
 # ─────────────────────────────────────────
@@ -10,7 +9,7 @@ import google.generativeai as genai
 def get_api_key():
     try:
         return st.secrets["GEMINI_API_KEY"]
-    except Exception:
+    except:
         pass
 
     key = os.getenv("GEMINI_API_KEY")
@@ -22,12 +21,12 @@ def get_api_key():
 API_KEY = get_api_key()
 
 # ─────────────────────────────────────────
-# 🔥 Page Config
+# 🔥 PAGE CONFIG
 # ─────────────────────────────────────────
 st.set_page_config(page_title="BIS AI Assistant", layout="wide", page_icon="🏗️")
 
 # ─────────────────────────────────────────
-# 🎨 Styling
+# 🎨 STYLING
 # ─────────────────────────────────────────
 st.markdown("""
 <style>
@@ -35,35 +34,37 @@ st.markdown("""
 
 .card {
     background: white;
-    padding: 18px 22px;
+    padding: 18px;
     border-radius: 12px;
-    margin-bottom: 14px;
-    border-left: 4px solid #2563eb;
+    margin-bottom: 12px;
+    border-left: 5px solid #2563eb;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.card h4 { color: #1e40af; }
+.card h4 {
+    color: #1e40af;
+}
 
 .ai-box {
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    background: #eff6ff;
     border: 1px solid #93c5fd;
-    border-radius: 12px;
-    padding: 18px;
-    margin-top: 16px;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 15px;
 }
 
 .error-box {
     background: #fef2f2;
     border: 1px solid #fca5a5;
     border-radius: 10px;
-    padding: 14px;
+    padding: 12px;
     color: #991b1b;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# 🧠 FAISS Index Check
+# 🧠 INDEX CHECK
 # ─────────────────────────────────────────
 if not os.path.exists("faiss_index.bin"):
     with st.spinner("Building index..."):
@@ -82,11 +83,8 @@ def generate_answer(query, context):
     try:
         genai.configure(api_key=api_key)
 
-        # ✅ FIXED MODEL
-        try:
-            model = genai.GenerativeModel("gemini-1.5-flash-latest")
-        except:
-            model = genai.GenerativeModel("gemini-pro")
+        # ✅ FINAL STABLE MODEL
+        model = genai.GenerativeModel("gemini-pro")
 
         prompt = f"""
 You are a civil engineering expert.
@@ -96,7 +94,7 @@ User Query: {query}
 BIS Standards:
 {context}
 
-Explain:
+Explain clearly:
 - Why each standard is relevant
 - Real-world usage
 - Safety importance
@@ -108,14 +106,7 @@ Rules:
 - Keep it 4-5 lines
 """
 
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.3,
-                top_p=0.9,
-                max_output_tokens=400
-            )
-        )
+        response = model.generate_content(prompt)
 
         if not response.candidates:
             return "❌ No response from model", False
@@ -134,13 +125,12 @@ Rules:
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ BIS Compliance AI Assistant")
-st.caption("Powered by Gemini LLM + FAISS search")
+st.caption("Powered by Gemini LLM + FAISS Search")
 
-# API key status
 if not API_KEY:
     st.error("⚠️ GEMINI_API_KEY missing")
 else:
-    st.success("API Key Loaded")
+    st.success("✅ API Key Loaded")
 
 st.divider()
 
@@ -149,7 +139,7 @@ query = st.text_input("Enter product description:")
 if st.button("🚀 Search"):
 
     if not query:
-        st.warning("Enter something first")
+        st.warning("Please enter something")
 
     else:
         with st.spinner("Searching..."):
@@ -159,7 +149,7 @@ if st.button("🚀 Search"):
             st.warning("No results found")
 
         else:
-            # Show results
+            # 📊 SHOW RESULTS
             for r in results[:3]:
                 st.markdown(f"""
                 <div class="card">
@@ -169,7 +159,7 @@ if st.button("🚀 Search"):
                 </div>
                 """, unsafe_allow_html=True)
 
-            # Context
+            # 🧠 CONTEXT
             context = "\n".join([
                 f"{r['standard_id']} ({r['title']}): {r['scope']}"
                 for r in results[:3]
