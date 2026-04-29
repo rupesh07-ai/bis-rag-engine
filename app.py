@@ -4,66 +4,78 @@ import os
 import time
 import google.generativeai as genai
 
-# 🔐 Load API key from env (Streamlit Secrets)
+# 🔐 Load API key from Streamlit Secrets
 API_KEY = os.getenv("GEMINI_API_KEY")
 if API_KEY:
     genai.configure(api_key=API_KEY)
 
-# 🖼️ Page config
+# 🔥 Page config
 st.set_page_config(page_title="BIS AI", layout="wide")
 
-# 🎨 UI CSS
+# 🎨 UI Styling
 st.markdown("""
 <style>
-.stApp { background-color: #f5f7fa; }
+.stApp {
+    background-color: #f5f7fa;
+}
 .card {
-    background: white; padding: 15px; border-radius: 10px;
-    margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🧠 Ensure index exists
+# 🧠 Ensure FAISS index exists
 if not os.path.exists("faiss_index.bin"):
     os.system("python embed.py")
 
-# 🤖 Gemini function (debug-friendly)
+# 🤖 Gemini AI Function (Improved Prompt)
 def generate_answer(query, context):
     try:
         api_key = os.getenv("GEMINI_API_KEY")
+
         if not api_key:
-            return "❌ API KEY NOT FOUND (check Streamlit Secrets)"
+            return "❌ API KEY NOT FOUND"
 
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel("gemini-pro")
 
         prompt = f"""
-        User query: {query}
-        Relevant BIS standards: {context}
+        You are an expert in BIS standards.
 
-        Explain in simple, clear language why these standards are relevant.
-        Keep it short (3-5 lines).
+        User query: {query}
+        Relevant BIS standards:
+        {context}
+
+        Explain:
+        1. Why these standards match the product
+        2. Where they are used in real construction
+        3. Why they are important for safety and compliance
+
+        Give a clear and practical explanation (4-5 lines).
         """
 
         response = model.generate_content(prompt)
 
-        text = getattr(response, "text", None)
-        if not text:
-            return "❌ EMPTY RESPONSE FROM GEMINI"
+        if not response.text:
+            return "❌ EMPTY RESPONSE"
 
-        return text
+        return response.text
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
 
-# 🏗️ Title
+# 🔥 Title
 st.title("🏗️ BIS Standard Recommendation System")
 
 # 🔍 Input
 query = st.text_input("Enter product description:")
 
-# 🚀 Button
+# 🔘 Button
 if st.button("🚀 Get Recommendations"):
 
     if not query:
@@ -74,16 +86,18 @@ if st.button("🚀 Get Recommendations"):
         status = st.empty()
         progress = st.progress(0)
 
-        status.markdown("🔍 Analyzing...")
+        status.markdown("🔍 Analyzing input...")
+
         for i in range(1, 101):
             progress.progress(i)
             time.sleep(0.01)
-            if i == 40:
-                status.markdown("⚡ Matching standards...")
-            elif i == 80:
-                status.markdown("📊 Generating AI explanation...")
 
-        # 🔎 Retrieval
+            if i == 40:
+                status.markdown("⚡ Matching BIS standards...")
+            elif i == 80:
+                status.markdown("🤖 Generating AI explanation...")
+
+        # 🔍 Search
         results = search(query)
 
         progress.empty()
@@ -103,16 +117,21 @@ if st.button("🚀 Get Recommendations"):
                 </div>
                 """, unsafe_allow_html=True)
 
+            # 🧠 Better context for AI
+            context = "\n".join([
+                f"{r['standard_id']} - {r['title']}: {r['scope']}"
+                for r in results
+            ])
+
             # 🤖 AI explanation
-            context = " ".join([r["title"] for r in results])
             ai_answer = generate_answer(query, context)
 
-            # 🔁 Fallback (demo-safe)
+            # 🔁 Fallback (demo safe)
             if "❌" in ai_answer:
-                ai_answer = (
-                    f"These standards are relevant to '{query}' as they ensure "
-                    "quality, safety, and compliance for construction materials."
-                )
+                ai_answer = f"""
+                These standards are relevant to '{query}' because they define quality,
+                safety, and proper usage guidelines in construction materials and structures.
+                """
 
             st.subheader("🤖 AI Explanation")
             st.write(ai_answer)
