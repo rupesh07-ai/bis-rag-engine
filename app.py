@@ -41,7 +41,7 @@ if not os.path.exists("faiss_index.bin"):
 # ─────────────────────────────────────────
 # 🤖 AI FUNCTION (STABLE)
 # ─────────────────────────────────────────
-from google import genai
+import google.generativeai as genai
 
 def generate_answer(query, context):
 
@@ -51,33 +51,28 @@ def generate_answer(query, context):
         return "❌ API KEY NOT FOUND", False
 
     try:
-        client = genai.Client(api_key=api_key)
+        genai.configure(api_key=api_key)
 
-        response = client.models.generate_content(
-            model="gemini-1.5-flash-8b",   # ✅ FIXED MODEL
-            contents=f"""
-You are a civil engineering expert.
+        # ✅ ONLY WORKING MODEL FOR OLD SDK
+        model = genai.GenerativeModel("gemini-pro")
 
+        response = model.generate_content(f"""
 User Query: {query}
 
-BIS Standards:
+Relevant BIS Standards:
 {context}
 
 Explain clearly:
-- why each standard is relevant
-- real-world usage
-- safety importance
+- Why relevant
+- Real use
+- Safety importance
+(4-5 lines)
+""")
 
-Keep it short (4–5 lines)
-"""
-        )
-
-        text = response.text
-
-        if not text:
+        if not response.text:
             return "❌ Empty response", False
 
-        return text.strip(), True
+        return response.text.strip(), True
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}", False
