@@ -1,7 +1,7 @@
 import streamlit as st
 from query import search
 import os
-import google.generativeai as genai
+from google import genai
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -43,16 +43,17 @@ if not os.path.exists("faiss_index.bin"):
 # ─────────────────────────────────────────
 def generate_answer(query, context):
 
-    if not API_KEY:
+    api_key = get_api_key()
+
+    if not api_key:
         return "❌ API KEY NOT FOUND", False
 
     try:
-        genai.configure(api_key=API_KEY)
+        client = genai.Client(api_key=api_key)
 
-        # ✅ STABLE MODEL
-        model = genai.GenerativeModel("gemini-1.0-pro")
-
-        prompt = f"""
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"""
 You are a civil engineering expert.
 
 User Query: {query}
@@ -65,24 +66,16 @@ Explain clearly:
 - Real-world usage
 - Safety importance
 
-Rules:
-- Use clean English
-- Mention IS numbers
-- No generic answers
-- Keep it 4-5 lines
+Keep it short (4-5 lines)
 """
+        )
 
-        response = model.generate_content(prompt)
-
-        if not response.candidates:
-            return "❌ No response", False
-
-        text = response.text.strip()
+        text = response.text
 
         if not text:
             return "❌ Empty response", False
 
-        return text, True
+        return text.strip(), True
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}", False
