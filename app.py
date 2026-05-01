@@ -42,18 +42,21 @@ if not os.path.exists("faiss_index.bin"):
 # 🤖 AI FUNCTION (STABLE)
 # ─────────────────────────────────────────
 def generate_answer(query, context):
-
     api_key = get_api_key()
-
     if not api_key:
         return "❌ API KEY NOT FOUND", False
 
     try:
         client = genai.Client(api_key=api_key)
 
-        response = client.models.generate_content(
+        resp = client.models.generate_content(
             model="gemini-1.5-flash",
-            contents=f"""
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": f"""
 You are a civil engineering expert.
 
 User Query: {query}
@@ -61,17 +64,20 @@ User Query: {query}
 BIS Standards:
 {context}
 
-Explain clearly:
-- Why each standard is relevant
-- Real-world usage
-- Safety importance
+Explain:
+- why each standard is relevant
+- real-world usage
+- safety importance
 
-Keep it short (4-5 lines)
+Keep it short (4–5 lines).
 """
+                        }
+                    ],
+                }
+            ],
         )
 
-        text = response.text
-
+        text = resp.text
         if not text:
             return "❌ Empty response", False
 
