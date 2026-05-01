@@ -1,20 +1,16 @@
-st.markdown("""
-<style>
-
-/* 🔥 FORCE TEXT VISIBILITY */
-body, p, span, div, h1, h2, h3, h4, h5, h6 {
+/* FORCE TEXT VISIBLE */
+body, p, span, div, h1, h2, h3, h4 {
     color: #111111 !important;
 }
 
-/* 🔥 Background */
+/* APP BACKGROUND */
 .stApp {
     background-color: #f5f7fa !important;
 }
 
-/* 🔥 Card */
+/* CARD */
 .card {
-    background: #ffffff !important;
-    color: #111 !important;
+    background: white !important;
     padding: 18px;
     border-radius: 12px;
     margin-bottom: 12px;
@@ -22,34 +18,24 @@ body, p, span, div, h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* 🔥 Input box */
-input, textarea {
-    color: black !important;
-    background: white !important;
-}
-
-/* 🔥 Button */
-button {
-    color: white !important;
-}
-
-/* 🔥 AI box */
+/* AI BOX */
 .ai-box {
     background: #eff6ff;
-    color: #111;
     border: 1px solid #93c5fd;
     border-radius: 10px;
     padding: 16px;
 }
 
-/* 🔥 Error box */
+/* ERROR */
 .error-box {
     background: #fef2f2;
-    color: #991b1b;
     border: 1px solid #fca5a5;
     border-radius: 10px;
     padding: 12px;
+    color: #991b1b;
 }
 
-</style>
-""", unsafe_allow_html=True)
+/* INPUT */
+input {
+    color: black !important;
+}
