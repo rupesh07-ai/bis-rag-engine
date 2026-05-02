@@ -104,6 +104,7 @@ Keep it short (4-5 lines).
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
 st.caption("AI Enabled Version 🚀")
+st.write(API_KEY[:10])
 
 st.divider()
 
