@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-import google.generativeai as genai
+from google import genai  
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -71,15 +71,12 @@ def search(query):
 # ─────────────────────────────────────────
 def generate_ai(query, context):
 
-    if not API_KEY:
-        return "❌ API key missing"
-
     try:
-        genai.configure(api_key=API_KEY)
+        client = genai.Client(api_key=API_KEY)
 
-        model = genai.GenerativeModel("gemini-pro")
-
-        response = model.generate_content(f"""
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"""
 You are a civil engineering expert.
 
 User Query: {query}
@@ -93,13 +90,13 @@ Explain:
 - Safety importance
 
 Keep answer short (4-5 lines).
-""")
+"""
+        )
 
         return response.text
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
-
 
 # ─────────────────────────────────────────
 # 🔥 UI
