@@ -4,164 +4,122 @@ import time
 # ─────────────────────────────────────────
 # 🔥 PAGE CONFIG
 # ─────────────────────────────────────────
-st.set_page_config(page_title="BIS Assistant", layout="wide", page_icon="🏗️")
+st.set_page_config(page_title="BIS Assistant", layout="wide")
 
 # ─────────────────────────────────────────
 # 🎨 LOAD CSS
 # ─────────────────────────────────────────
-st.markdown("""
-<div class="code-bg">
-while(True):
-    analyze_data()
-    check_compliance()
-    ensure_safety()
-    optimize_materials()
-    BIS_engine.run()
-    print("Processing...")
-</div>
-""", unsafe_allow_html=True)
+def load_css():
+    try:
+        with open("assets/style.css") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except:
+        pass
+
+load_css()
 
 # ─────────────────────────────────────────
-# 🌌 BACKGROUND (Particles + Grid)
+# 📌 SIDEBAR
 # ─────────────────────────────────────────
-st.markdown("""
-<div class="grid-bg"></div>
-<div class="particles">
-    <span style="left:10%; animation-duration:18s;"></span>
-    <span style="left:20%; animation-duration:22s;"></span>
-    <span style="left:30%; animation-duration:25s;"></span>
-    <span style="left:40%; animation-duration:20s;"></span>
-    <span style="left:50%; animation-duration:19s;"></span>
-    <span style="left:60%; animation-duration:23s;"></span>
-    <span style="left:70%; animation-duration:21s;"></span>
-    <span style="left:80%; animation-duration:24s;"></span>
-    <span style="left:90%; animation-duration:26s;"></span>
-</div>
-""", unsafe_allow_html=True)
+st.sidebar.title("⚙️ Navigation")
+
+page = st.sidebar.radio("Go to", [
+    "🏠 Home",
+    "💬 Chat",
+    "📊 Dashboard"
+])
 
 # ─────────────────────────────────────────
 # 🔍 SMART SEARCH
 # ─────────────────────────────────────────
 def search(query):
     data = [
-        {
-            "standard_id": "IS 456",
-            "title": "Plain and Reinforced Concrete Code",
-            "scope": "Code of practice for reinforced concrete",
-            "reason": "Used in cement and building construction"
-        },
-        {
-            "standard_id": "IS 1786",
-            "title": "High Strength Deformed Steel Bars",
-            "scope": "Steel bars for reinforcement",
-            "reason": "Used in RCC structures"
-        },
-        {
-            "standard_id": "IS 269",
-            "title": "Ordinary Portland Cement",
-            "scope": "Specification for OPC cement",
-            "reason": "Used in building construction"
-        }
+        {"standard_id": "IS 456", "title": "Concrete Code", "scope": "Reinforced concrete", "reason": "Used in construction"},
+        {"standard_id": "IS 1786", "title": "Steel Bars", "scope": "Reinforcement steel", "reason": "Used in RCC"},
+        {"standard_id": "IS 269", "title": "Cement", "scope": "OPC cement", "reason": "Used in buildings"}
     ]
 
-    query_words = query.lower().split()
-    scored_results = []
-
+    results = []
     for item in data:
-        score = 0
-        text = (item["title"] + " " + item["scope"]).lower()
-
-        for word in query_words:
-            if word in item["title"].lower():
-                score += 3
-            if word in item["scope"].lower():
-                score += 2
-            if word in text:
-                score += 1
-
-        if score > 0:
-            scored_results.append((score, item))
-
-    scored_results.sort(reverse=True, key=lambda x: x[0])
-    results = [item for score, item in scored_results]
+        if query.lower() in (item["title"] + item["scope"]).lower():
+            results.append(item)
 
     return results if results else data
 
 # ─────────────────────────────────────────
-# 🤖 FREE AI
+# 🤖 AI (FAKE)
 # ─────────────────────────────────────────
 def generate_ai(query, results):
-    explanation = f"🔍 Based on '{query}', these BIS standards are important:\n\n"
-
+    text = f"🔍 Based on '{query}', relevant BIS standards:\n\n"
     for r in results:
-        explanation += f"• {r['standard_id']} ({r['title']}):\n"
-        explanation += f"  - Use: {r['scope']}\n"
-        explanation += f"  - Importance: {r['reason']}\n\n"
-
-    explanation += "📌 Ensures safety, durability, and compliance."
-
-    return explanation
+        text += f"• {r['standard_id']} - {r['title']} → {r['reason']}\n"
+    return text
 
 # ─────────────────────────────────────────
-# 🌑 HEADER
+# 🏠 HOME
 # ─────────────────────────────────────────
-st.markdown("""
-<h1 style='text-align: center; color: #a5b4fc; text-shadow: 0 0 20px #6366f1;'>
-🏗️ BIS Smart Compliance Assistant
-</h1>
-<p style='text-align: center; color: #94a3b8;'>
-Smart Search + AI Insights for BIS Standards
-</p>
-""", unsafe_allow_html=True)
+if page == "🏠 Home":
 
-st.divider()
+    st.markdown("""
+    <div class="fade-in">
+    <h1 style='text-align:center;'>🏗️ BIS Smart Compliance Assistant</h1>
+    <p style='text-align:center;'>Smart Search + AI Insights</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.divider()
+
+    st.markdown("### 🚀 What this tool does")
+    st.write("Find BIS standards quickly using smart search and AI insights.")
+
+# ─────────────────────────────────────────
+# 💬 CHAT
+# ─────────────────────────────────────────
+if page == "💬 Chat":
+
+    st.markdown("## 💬 Chat with BIS Assistant")
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    user_input = st.chat_input("Ask about materials...")
+
+    if user_input:
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        # loading
+        progress = st.progress(0)
+        for i in range(100):
+            time.sleep(0.005)
+            progress.progress(i+1)
+
+        results = search(user_input)
+        response = generate_ai(user_input, results)
+
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    # display chat
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            if msg["role"] == "assistant":
+                placeholder = st.empty()
+                text = ""
+                for char in msg["content"]:
+                    text += char
+                    placeholder.markdown(text)
+                    time.sleep(0.005)
+            else:
+                st.markdown(msg["content"])
 
 # ─────────────────────────────────────────
 # 📊 DASHBOARD
 # ─────────────────────────────────────────
-col1, col2, col3 = st.columns(3)
-col1.metric("Standards Covered", "120+")
-col2.metric("Accuracy", "95%")
-col3.metric("Response Time", "0.5s")
+if page == "📊 Dashboard":
 
-# ─────────────────────────────────────────
-# 💬 CHATBOT SYSTEM
-# ─────────────────────────────────────────
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.markdown("## 📊 Dashboard")
 
-st.markdown("## 💬 Chat with BIS Assistant")
+    col1, col2, col3 = st.columns(3)
 
-user_input = st.chat_input("Ask about materials, standards...")
-
-if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
-
-    # ⏳ LOADING
-    progress = st.progress(0)
-    for i in range(100):
-        time.sleep(0.01)
-        progress.progress(i+1)
-
-    results = search(user_input)
-    response = generate_ai(user_input, results)
-
-    st.session_state.messages.append({"role": "assistant", "content": response})
-
-# ─────────────────────────────────────────
-# 🔁 CHAT DISPLAY + TYPING EFFECT
-# ─────────────────────────────────────────
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-
-        if msg["role"] == "assistant":
-            placeholder = st.empty()
-            text = ""
-
-            for char in msg["content"]:
-                text += char
-                placeholder.markdown(text)
-                time.sleep(0.01)
-
-        else:
-            st.markdown(msg["content"])
+    col1.markdown('<div class="card"><h2>120+</h2><p>Standards</p></div>', unsafe_allow_html=True)
+    col2.markdown('<div class="card"><h2>95%</h2><p>Accuracy</p></div>', unsafe_allow_html=True)
+    col3.markdown('<div class="card"><h2>0.5s</h2><p>Speed</p></div>', unsafe_allow_html=True)
