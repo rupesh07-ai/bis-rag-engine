@@ -122,10 +122,5 @@ if st.button("🚀 Get Recommendations"):
 
             st.subheader("🤖 AI Expert Analysis")
 
-            with st.spinner("Generating explanation..."):
-                answer, ok = generate_answer(query, context)
-
-            if ok:
-                st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="error-box">{answer}</div>', unsafe_allow_html=True)
+           st.subheader("🤖 AI Expert Analysis")
+st.success("AI temporarily disabled (app stable now)")
