@@ -15,12 +15,13 @@ p, span, div {
     color: #cbd5f5 !important;
 }
 
-/* 💬 INPUT */
+/* 💬 INPUT BOX */
 input, textarea {
     background-color: #1e293b !important;
     color: #ffffff !important;
     border-radius: 8px !important;
     border: 1px solid #334155 !important;
+    padding: 10px !important;
 }
 
 /* 🔘 BUTTON */
@@ -29,9 +30,10 @@ button {
     color: white !important;
     border-radius: 8px !important;
     border: none;
+    padding: 8px 16px;
 }
 
-/* 🧊 CARDS (IMPORTANT) */
+/* 🧊 SIMPLE CARD STYLE */
 div[style*="border"] {
     background-color: #1e293b !important;
     border: 1px solid #334155 !important;
@@ -39,7 +41,7 @@ div[style*="border"] {
     padding: 12px;
 }
 
-/* 📊 METRICS */
+/* 📊 METRIC BOX */
 [data-testid="stMetric"] {
     background-color: #1e293b;
     padding: 12px;
@@ -50,4 +52,9 @@ div[style*="border"] {
 canvas {
     background-color: #1e293b !important;
     border-radius: 10px;
+}
+
+/* ✨ DIVIDER */
+hr {
+    border-color: #334155;
 }
