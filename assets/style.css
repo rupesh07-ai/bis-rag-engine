@@ -1,24 +1,31 @@
-/* BACKGROUND */
+/* 🌑 DARK BACKGROUND */
 .stApp {
-    background: linear-gradient(135deg, #f5f7fa, #e4ecff);
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
 }
 
-/* HEADER */
-h1 {
-    color: #1e293b;
-    font-weight: 700;
+/* TEXT */
+body, p, span, div {
+    color: #e2e8f0 !important;
+}
+
+/* HEADINGS */
+h1, h2, h3, h4 {
+    color: #f1f5f9 !important;
 }
 
 /* INPUT BOX */
 input {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155 !important;
     border-radius: 10px !important;
     padding: 10px !important;
-    border: 1px solid #cbd5e1 !important;
 }
 
 /* BUTTON */
 button[kind="primary"] {
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white !important;
     border-radius: 10px;
     font-weight: bold;
@@ -26,29 +33,34 @@ button[kind="primary"] {
 
 /* CARD */
 .card {
-    background: white;
+    background: #1e293b;
     padding: 18px;
     border-radius: 14px;
     margin-bottom: 15px;
-    border-left: 5px solid #2563eb;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    border-left: 5px solid #6366f1;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     transition: 0.3s;
 }
 
 .card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
 }
 
 /* AI BOX */
 .ai-box {
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
+    background: #0f172a;
+    border: 1px solid #334155;
     border-radius: 12px;
     padding: 18px;
     margin-top: 10px;
 }
 
-/* TEXT */
-p {
-    color: #334155;
+/* WARNING */
+.stAlert {
+    background-color: #7f1d1d !important;
+}
+
+/* DIVIDER */
+hr {
+    border-color: #334155;
 }

@@ -87,24 +87,38 @@ def generate_ai(query, results):
     return explanation
 
 # ─────────────────────────────────────────
-# 🔥 UI HEADER
+# 🌑 HEADER (DARK MODE STYLE)
 # ─────────────────────────────────────────
-st.title("🏗️ BIS Smart Compliance Assistant")
-st.markdown("### 🔍 Find the right BIS standards instantly with smart search + AI insights")
+st.markdown("""
+<h1 style='text-align: center; color: #a5b4fc;'>
+🏗️ BIS Smart Compliance Assistant
+</h1>
+<p style='text-align: center; color: #94a3b8;'>
+Find the right BIS standards instantly with smart search + AI insights
+</p>
+""", unsafe_allow_html=True)
 
 st.divider()
 
 # ─────────────────────────────────────────
-# 🔎 INPUT SECTION
+# 🔎 INPUT
 # ─────────────────────────────────────────
 st.markdown("#### 🔎 Enter product / material name")
 
 query = st.text_input("e.g. cement, steel, concrete")
 
 # ─────────────────────────────────────────
-# 🔘 BUTTON ACTION
+# 🔘 CENTER BUTTON
 # ─────────────────────────────────────────
-if st.button("🚀 Get Recommendations"):
+col1, col2, col3 = st.columns([1,2,1])
+
+with col2:
+    clicked = st.button("🚀 Get Recommendations")
+
+# ─────────────────────────────────────────
+# 🔥 MAIN ACTION
+# ─────────────────────────────────────────
+if clicked:
 
     if not query:
         st.warning("⚠️ Please enter something")
@@ -112,9 +126,7 @@ if st.button("🚀 Get Recommendations"):
     else:
         results = search(query)
 
-        # ─────────────────────────────────
-        # 📊 RESULTS SECTION
-        # ─────────────────────────────────
+        # 📊 RESULTS
         st.markdown("## 📊 Recommended Standards")
 
         for r in results:
@@ -126,9 +138,7 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
-        # ─────────────────────────────────
-        # 🤖 AI SECTION
-        # ─────────────────────────────────
+        # 🤖 AI
         st.markdown("## 🤖 AI Insights")
 
         answer = generate_ai(query, results)
