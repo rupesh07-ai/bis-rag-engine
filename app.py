@@ -1,7 +1,6 @@
 import requests
 import streamlit as st
 import os
-from google import genai
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -85,19 +84,17 @@ User Query: {query}
 Relevant BIS Standards:
 {context}
 
-Explain:
+Explain clearly:
 - Why relevant
 - Real-life usage
 - Safety importance
 
-Keep answer short (4-5 lines).
+Keep it short (4-5 lines).
 """
             }
         }
 
-        headers = {
-            "Content-Type": "application/json"
-        }
+        headers = {"Content-Type": "application/json"}
 
         response = requests.post(url, json=payload, headers=headers)
         result = response.json()
