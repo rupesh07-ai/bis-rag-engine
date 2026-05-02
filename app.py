@@ -134,7 +134,5 @@ if st.button("🚀 Get Recommendations"):
             for r in results
         ])
 
-        with st.spinner("Generating AI response..."):
-            answer = generate_ai(query, context)
-
-        st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
+st.subheader("🤖 AI Expert Analysis")
+st.success("AI temporarily disabled (stable mode)")
