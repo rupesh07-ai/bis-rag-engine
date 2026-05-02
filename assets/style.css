@@ -1,36 +1,60 @@
-/* 🔎 SEARCH INPUT FIX */
-.stTextInput > div > div > input {
-    background-color: #0f172a !important;
-    color: #ffffff !important;
-    border: 2px solid #6366f1 !important;
-    border-radius: 12px !important;
-    padding: 12px !important;
-    font-size: 16px;
+/* 🌑 DARK BACKGROUND */
+.stApp {
+    background-color: #020617;
+    color: white;
 }
 
-/* ✨ PLACEHOLDER FIX */
-.stTextInput input::placeholder {
-    color: #94a3b8 !important;
-    opacity: 1;
+/* ✨ SOFT GLOW BACKGROUND */
+.main::before {
+    content: "";
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #6366f1, transparent);
+    top: 20%;
+    left: 30%;
+    filter: blur(100px);
+    z-index: -1;
 }
 
-/* 🔥 INPUT FOCUS GLOW */
-.stTextInput input:focus {
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 10px #8b5cf6;
-}
-
-/* 🔘 SEARCH BUTTON FIX */
-.stButton > button {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+/* 🔥 TITLE */
+h1 {
     color: white !important;
-    border-radius: 10px;
-    font-weight: bold;
-    padding: 10px 20px;
+    font-weight: 700;
 }
 
-/* ✨ BUTTON HOVER */
-.stButton > button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(99,102,241,0.6);
+/* 💬 INPUT BOX */
+input, textarea {
+    background-color: #0f172a !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: 1px solid #334155 !important;
+}
+
+/* 🧊 CARDS */
+div[style*="border"] {
+    background: rgba(30,41,59,0.6);
+    padding: 12px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+/* ✨ CARD HOVER */
+div[style*="border"]:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(99,102,241,0.4);
+}
+
+/* 🚀 BUTTON */
+button {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: white !important;
+    border-radius: 10px !important;
+}
+
+/* 📊 METRICS */
+[data-testid="stMetric"] {
+    background: rgba(30,41,59,0.5);
+    padding: 15px;
+    border-radius: 10px;
 }
