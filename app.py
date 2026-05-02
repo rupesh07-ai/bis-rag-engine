@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from google import genai  
+from google import genai   # ✅ NEW SDK
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -31,7 +31,7 @@ def load_css():
 load_css()
 
 # ─────────────────────────────────────────
-# 🔍 SEARCH (simple)
+# 🔍 SIMPLE SEARCH
 # ─────────────────────────────────────────
 def search(query):
     data = [
@@ -65,11 +65,13 @@ def search(query):
 
     return results if results else data
 
-
 # ─────────────────────────────────────────
-# 🤖 AI FUNCTION
+# 🤖 AI FUNCTION (NEW SDK)
 # ─────────────────────────────────────────
 def generate_ai(query, context):
+
+    if not API_KEY:
+        return "❌ API key missing"
 
     try:
         client = genai.Client(api_key=API_KEY)
@@ -102,7 +104,7 @@ Keep answer short (4-5 lines).
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("AI Enabled Version")
+st.caption("AI Enabled Version 🚀")
 
 st.divider()
 
@@ -116,7 +118,6 @@ if st.button("🚀 Get Recommendations"):
     else:
         results = search(query)
 
-        # 🔹 show cards
         for r in results:
             st.markdown(f"""
             <div class="card">
@@ -126,7 +127,6 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
-        # 🔹 AI PART
         st.subheader("🤖 AI Expert Analysis")
 
         context = "\n".join([
@@ -134,5 +134,7 @@ if st.button("🚀 Get Recommendations"):
             for r in results
         ])
 
-st.subheader("🤖 AI Expert Analysis")
-st.success("AI temporarily disabled (stable mode)")
+        with st.spinner("Generating AI response..."):
+            answer = generate_ai(query, context)
+
+        st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
