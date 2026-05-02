@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 
 # ─────────────────────────────────────────
 # 🔥 PAGE CONFIG
@@ -19,7 +18,7 @@ def load_css():
 load_css()
 
 # ─────────────────────────────────────────
-# 🔍 SIMPLE SEARCH
+# 🔍 SMART SEARCH (RANKED)
 # ─────────────────────────────────────────
 def search(query):
     data = [
@@ -43,13 +42,30 @@ def search(query):
         }
     ]
 
-    query = query.lower()
-    results = []
+    query_words = query.lower().split()
+    scored_results = []
 
     for item in data:
-        text = (item["title"] + item["scope"]).lower()
-        if query in text:
-            results.append(item)
+        score = 0
+        title = item["title"].lower()
+        scope = item["scope"].lower()
+        text = title + " " + scope
+
+        for word in query_words:
+            if word in title:
+                score += 3
+            if word in scope:
+                score += 2
+            if word in text:
+                score += 1
+
+        if score > 0:
+            scored_results.append((score, item))
+
+    # sort by highest score
+    scored_results.sort(reverse=True, key=lambda x: x[0])
+
+    results = [item for score, item in scored_results]
 
     return results if results else data
 
@@ -76,7 +92,7 @@ def generate_ai(query, results):
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("Free AI Version (No API Required)")
+st.caption("Smart Search + Free AI (No API Required)")
 
 st.divider()
 
@@ -100,7 +116,7 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
-        # 🔹 AI ANALYSIS (FREE)
+        # 🔹 AI ANALYSIS
         st.subheader("🤖 AI Expert Analysis")
 
         answer = generate_ai(query, results)
