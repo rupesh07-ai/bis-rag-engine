@@ -1,7 +1,7 @@
 import streamlit as st
 from query import search
 import os
-from google import genai
+import google.generativeai as genai   # ✅ ONLY ONE SDK
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -20,7 +20,7 @@ API_KEY = get_api_key()
 st.set_page_config(page_title="BIS AI Assistant", layout="wide", page_icon="🏗️")
 
 # ─────────────────────────────────────────
-# 🎨 LOAD CSS (IMPORTANT FIX)
+# 🎨 LOAD CSS
 # ─────────────────────────────────────────
 def load_css():
     try:
@@ -41,32 +41,31 @@ if not os.path.exists("faiss_index.bin"):
 # ─────────────────────────────────────────
 # 🤖 AI FUNCTION (STABLE)
 # ─────────────────────────────────────────
-import google.generativeai as genai
-
 def generate_answer(query, context):
 
-    api_key = get_api_key()
-
-    if not api_key:
+    if not API_KEY:
         return "❌ API KEY NOT FOUND", False
 
     try:
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=API_KEY)
 
-        # ✅ ONLY WORKING MODEL FOR OLD SDK
+        # ✅ SAFE WORKING MODEL
         model = genai.GenerativeModel("gemini-pro")
 
         response = model.generate_content(f"""
+You are a civil engineering expert.
+
 User Query: {query}
 
 Relevant BIS Standards:
 {context}
 
 Explain clearly:
-- Why relevant
-- Real use
+- Why each standard is relevant
+- Real-world usage
 - Safety importance
-(4-5 lines)
+
+Keep it short (4-5 lines)
 """)
 
         if not response.text:
