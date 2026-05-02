@@ -90,15 +90,20 @@ def generate_ai(query, results):
 # 🌑 HEADER (DARK MODE STYLE)
 # ─────────────────────────────────────────
 st.markdown("""
-<h1 style='text-align: center; color: #a5b4fc;'>
+<h1 style='text-align: center;
+color: #a5b4fc;
+animation: fadeIn 2s ease-in-out;
+text-shadow: 0 0 20px rgba(99,102,241,0.7);'>
 🏗️ BIS Smart Compliance Assistant
 </h1>
-<p style='text-align: center; color: #94a3b8;'>
-Find the right BIS standards instantly with smart search + AI insights
-</p>
-""", unsafe_allow_html=True)
 
-st.divider()
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
 # 🔎 INPUT
