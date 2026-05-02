@@ -76,11 +76,14 @@ def generate_ai(query, context):
     try:
         import requests
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/text-bison-001:generateText?key={API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}"
 
         payload = {
-            "prompt": {
-                "text": f"""
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": f"""
 User Query: {query}
 
 Relevant BIS Standards:
@@ -93,7 +96,10 @@ Explain clearly:
 
 Keep it short (4-5 lines).
 """
-            }
+                        }
+                    ]
+                }
+            ]
         }
 
         headers = {"Content-Type": "application/json"}
@@ -101,9 +107,9 @@ Keep it short (4-5 lines).
         response = requests.post(url, json=payload, headers=headers)
         result = response.json()
 
-        # 🔥 SAFE HANDLING
+        # ✅ SAFE PARSE
         if "candidates" in result:
-            return result["candidates"][0].get("output", "No output")
+            return result["candidates"][0]["content"]["parts"][0]["text"]
 
         elif "error" in result:
             return f"❌ API ERROR: {result['error']['message']}"
