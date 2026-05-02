@@ -1,7 +1,7 @@
 import streamlit as st
 from query import search
 import os
-import google.generativeai as genai   # ✅ ONLY ONE SDK
+import google.generativeai as genai   # safe import
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -37,44 +37,6 @@ load_css()
 if not os.path.exists("faiss_index.bin"):
     st.error("❌ Index file missing. Run embed.py locally and push.")
     st.stop()
-
-# ─────────────────────────────────────────
-# 🤖 AI FUNCTION (STABLE)
-# ─────────────────────────────────────────
-def generate_answer(query, context):
-
-    if not API_KEY:
-        return "❌ API KEY NOT FOUND", False
-
-    try:
-        genai.configure(api_key=API_KEY)
-
-        # ✅ SAFE WORKING MODEL
-        model = genai.GenerativeModel("gemini-pro")
-
-        response = model.generate_content(f"""
-You are a civil engineering expert.
-
-User Query: {query}
-
-Relevant BIS Standards:
-{context}
-
-Explain clearly:
-- Why each standard is relevant
-- Real-world usage
-- Safety importance
-
-Keep it short (4-5 lines)
-""")
-
-        if not response.text:
-            return "❌ Empty response", False
-
-        return response.text.strip(), True
-
-    except Exception as e:
-        return f"❌ ERROR: {str(e)}", False
 
 # ─────────────────────────────────────────
 # 🔥 UI
@@ -120,5 +82,6 @@ if st.button("🚀 Get Recommendations"):
                 for r in results[:3]
             ])
 
-          st.subheader("🤖 AI Expert Analysis")
-st.success("AI temporarily disabled (app stable now)")
+            # 🔹 AI DISABLED (STABLE MODE)
+            st.subheader("🤖 AI Expert Analysis")
+            st.success("AI temporarily disabled (app stable now)")
