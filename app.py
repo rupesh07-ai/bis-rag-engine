@@ -120,7 +120,5 @@ if st.button("🚀 Get Recommendations"):
                 for r in results[:3]
             ])
 
-            st.subheader("🤖 AI Expert Analysis")
-
-           st.subheader("🤖 AI Expert Analysis")
+          st.subheader("🤖 AI Expert Analysis")
 st.success("AI temporarily disabled (app stable now)")
