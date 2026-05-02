@@ -1,44 +1,36 @@
-/* 🌑 DARK BACKGROUND */
-.stApp {
-    background: linear-gradient(135deg, #020617, #0f172a);
-    color: #e2e8f0;
+/* 🔎 SEARCH INPUT FIX */
+.stTextInput > div > div > input {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 2px solid #6366f1 !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    font-size: 16px;
 }
 
-/* 🧊 GLASS CARDS */
-.card {
-    background: rgba(30, 41, 59, 0.6);
-    padding: 20px;
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(148,163,184,0.2);
-    text-align: center;
-    transition: 0.3s;
+/* ✨ PLACEHOLDER FIX */
+.stTextInput input::placeholder {
+    color: #94a3b8 !important;
+    opacity: 1;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 20px rgba(99,102,241,0.4);
+/* 🔥 INPUT FOCUS GLOW */
+.stTextInput input:focus {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 10px #8b5cf6;
 }
 
-/* ✨ FADE ANIMATION */
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 🔘 BUTTON */
+/* 🔘 SEARCH BUTTON FIX */
 .stButton > button {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white !important;
     border-radius: 10px;
+    font-weight: bold;
+    padding: 10px 20px;
 }
 
-/* INPUT */
-input {
-    background: #1e293b !important;
-    color: white !important;
+/* ✨ BUTTON HOVER */
+.stButton > button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(99,102,241,0.6);
 }

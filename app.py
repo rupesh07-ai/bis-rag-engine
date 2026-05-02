@@ -78,6 +78,22 @@ if page == "🏠 Home":
 if page == "💬 Chat":
 
     st.markdown("## 💬 Chat with BIS Assistant")
+    # 🔎 SEARCH BAR (ADD THIS)
+st.markdown("### 🔍 **Quick Search (Type material name)**")
+
+query = st.text_input("Enter material (e.g. cement, steel)")
+
+if st.button("Search"):
+    results = search(query)
+
+    for r in results:
+        st.markdown(f"""
+        <div class="card">
+            <h4>{r['standard_id']} - {r['title']}</h4>
+            <p><b>Use:</b> {r['scope']}</p>
+            <p><b>Why:</b> {r['reason']}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
