@@ -46,23 +46,45 @@ def search(query):
 # ─────────────────────────────────────────
 def generate_ai(query, results):
 
-    text = f"## 🔍 AI Analysis for **{query}**\n\n"
+    text = f"""
+## 🔍 AI Analysis for **{query}**
 
-    for r in results:
+Based on your input, the following BIS standards are highly relevant for ensuring proper design, safety, and compliance in engineering applications.
+
+"""
+
+    for i, r in enumerate(results, start=1):
         text += f"""
-### 🏗️ {r['standard_id']} – {r['title']}
+### {i}. 🏗️ {r['standard_id']} – {r['title']}
 
-**Scope:** {r['scope']}  
-**Importance:** {r['reason']}  
+**📌 Scope:**  
+{r['scope']}
 
-This standard ensures safety, durability and proper engineering practices in real-world construction.
+**💡 Why This Standard Matters:**  
+{r['reason']}
+
+**⚠️ Real-World Importance:**  
+This standard plays a crucial role in ensuring structural safety and reliability.  
+It helps engineers follow proper guidelines, prevents failures, and improves the overall quality of construction.
+
+**📊 Practical Application:**  
+Used in real projects such as buildings, bridges, and infrastructure where compliance with BIS standards is mandatory.
 
 ---
 """
 
     text += """
-### 🚀 Final Insight
-Using these standards ensures safety, compliance, and long-term structural strength.
+## 🚀 Final Engineering Insight
+
+By following these BIS standards, engineers and builders can ensure:
+
+- ✔ Strong and durable structures  
+- ✔ Safety for people and environment  
+- ✔ Compliance with government regulations  
+- ✔ High-quality construction practices  
+
+👉 This makes the project reliable, efficient, and future-proof.
+
 """
 
     return text
