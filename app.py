@@ -4,16 +4,6 @@ import pandas as pd
 
 st.set_page_config(page_title="BIS Assistant", layout="wide")
 
-# 🔥 LOAD CSS
-def load_css():
-    try:
-        with open("assets/style.css") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except:
-        pass
-
-load_css()
-
 # ─────────────────────────────────────────
 # DATA
 # ─────────────────────────────────────────
@@ -52,20 +42,49 @@ def search(query):
     return results
 
 # ─────────────────────────────────────────
-# AI EXPLANATION
+# AI EXPLANATION (DETAILED)
 # ─────────────────────────────────────────
 def generate_ai(query, results):
 
     text = f"""
 ## 🔍 AI Analysis for **{query}**
+
+Based on your input, the following BIS standards are highly relevant for ensuring proper design, safety, and compliance in engineering applications.
+
 """
 
     for i, r in enumerate(results, start=1):
         text += f"""
 ### {i}. 🏗️ {r['standard_id']} – {r['title']}
-**Scope:** {r['scope']}  
-**Why:** {r['reason']}
+
+**📌 Scope:**  
+{r['scope']}
+
+**💡 Why This Standard Matters:**  
+{r['reason']}
+
+**⚠️ Real-World Importance:**  
+This standard plays a crucial role in ensuring structural safety and reliability.  
+It helps engineers follow proper guidelines, prevents failures, and improves the overall quality of construction.
+
+**📊 Practical Application:**  
+Used in real projects such as buildings, bridges, and infrastructure where compliance with BIS standards is mandatory.
+
 ---
+"""
+
+    text += """
+## 🚀 Final Engineering Insight
+
+By following these BIS standards, engineers and builders can ensure:
+
+- ✔ Strong and durable structures  
+- ✔ Safety for people and environment  
+- ✔ Compliance with government regulations  
+- ✔ High-quality construction practices  
+
+👉 This makes the project reliable, efficient, and future-proof.
+
 """
 
     return text
@@ -75,6 +94,7 @@ def generate_ai(query, results):
 # ─────────────────────────────────────────
 st.title("🏗️ BIS Smart Compliance Assistant")
 
+# chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -84,6 +104,7 @@ if user_input:
 
     st.session_state.messages.append({"role": "user", "content": user_input})
 
+    # loading
     progress = st.progress(0)
     for i in range(100):
         time.sleep(0.003)
@@ -91,6 +112,7 @@ if user_input:
 
     results = search(user_input)
 
+    # 🥇 BEST MATCH
     top = results[0]
     st.markdown(f"### 🥇 Best Match ({top['confidence']}%)")
 
@@ -102,6 +124,7 @@ if user_input:
     </div>
     """, unsafe_allow_html=True)
 
+    # 📊 OTHER RESULTS
     st.markdown("### 📊 Other Results")
 
     for r in results[1:]:
@@ -111,6 +134,27 @@ if user_input:
         </div>
         """, unsafe_allow_html=True)
 
+    # ⚖️ COMPARE
+    ids = [f"{r['standard_id']} - {r['title']}" for r in results]
+    choice = st.multiselect("Compare standards", ids, max_selections=2)
+
+    if len(choice) == 2:
+        a = next(r for r in results if choice[0].startswith(r['standard_id']))
+        b = next(r for r in results if choice[1].startswith(r['standard_id']))
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+            st.markdown(f"### {a['standard_id']}")
+            st.write("Scope:", a["scope"])
+            st.write("Why:", a["reason"])
+
+        with c2:
+            st.markdown(f"### {b['standard_id']}")
+            st.write("Scope:", b["scope"])
+            st.write("Why:", b["reason"])
+
+    # 📈 INSIGHTS
     df = pd.DataFrame(results)
 
     st.markdown("### 📈 Insights")
@@ -119,6 +163,7 @@ if user_input:
 
     st.bar_chart(df["confidence"])
 
+    # 🤖 AI
     response = generate_ai(user_input, results)
 
     st.markdown("## 🤖 AI Explanation")
@@ -129,12 +174,14 @@ if user_input:
         "content": response
     })
 
+    # 📄 DOWNLOAD
     st.download_button(
         "📄 Download Report",
         response,
         file_name="report.txt"
     )
 
+# 💬 CHAT DISPLAY
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
