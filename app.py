@@ -1,7 +1,5 @@
 import streamlit as st
-from query import search
 import os
-import google.generativeai as genai   # safe import
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -32,20 +30,32 @@ def load_css():
 load_css()
 
 # ─────────────────────────────────────────
-# 🧠 INDEX CHECK
+# 🔍 TEMP SEARCH FUNCTION (NO FAISS)
 # ─────────────────────────────────────────
-if not os.path.exists("faiss_index.bin"):
-    st.error("❌ Index file missing. Run embed.py locally and push.")
-    st.stop()
+def search(query):
+    return [
+        {
+            "standard_id": "IS 456",
+            "title": "Plain and Reinforced Concrete Code",
+            "scope": "Code of practice for reinforced concrete",
+            "reason": "Used in cement and building construction"
+        },
+        {
+            "standard_id": "IS 1786",
+            "title": "High Strength Deformed Steel Bars",
+            "scope": "Steel bars for reinforcement",
+            "reason": "Used in RCC structures"
+        }
+    ]
 
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("FAISS + Gemini AI System")
+st.caption("Stable Version (FAISS Disabled)")
 
 if not API_KEY:
-    st.error("⚠️ GEMINI_API_KEY missing")
+    st.warning("⚠️ API key optional (AI disabled)")
 else:
     st.success("✅ API Key Loaded")
 
@@ -59,29 +69,18 @@ if st.button("🚀 Get Recommendations"):
         st.warning("Please enter something")
 
     else:
-        with st.spinner("Searching..."):
-            results = search(query)
+        results = search(query)
 
-        if not results:
-            st.warning("No results found")
+        # 🔹 SHOW RESULTS
+        for r in results:
+            st.markdown(f"""
+            <div class="card">
+                <h4>{r['standard_id']} - {r['title']}</h4>
+                <p><b>Scope:</b> {r['scope']}</p>
+                <p><b>Why Relevant:</b> {r['reason']}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
-        else:
-            # 🔹 SHOW RESULTS
-            for r in results[:3]:
-                st.markdown(f"""
-                <div class="card">
-                    <h4>{r['standard_id']} - {r['title']}</h4>
-                    <p><b>Scope:</b> {r['scope']}</p>
-                    <p><b>Why Relevant:</b> {r['reason']}</p>
-                </div>
-                """, unsafe_allow_html=True)
-
-            # 🔹 CONTEXT
-            context = "\n".join([
-                f"{r['standard_id']} ({r['title']}): {r['scope']}"
-                for r in results[:3]
-            ])
-
-            # 🔹 AI DISABLED (STABLE MODE)
-            st.subheader("🤖 AI Expert Analysis")
-            st.success("AI temporarily disabled (app stable now)")
+        # 🔹 AI DISABLED
+        st.subheader("🤖 AI Expert Analysis")
+        st.success("AI temporarily disabled (app stable now)")
