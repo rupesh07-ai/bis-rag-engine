@@ -3,7 +3,7 @@ import streamlit as st
 # ─────────────────────────────────────────
 # 🔥 PAGE CONFIG
 # ─────────────────────────────────────────
-st.set_page_config(page_title="BIS AI Assistant", layout="wide", page_icon="🏗️")
+st.set_page_config(page_title="BIS Assistant", layout="wide", page_icon="🏗️")
 
 # ─────────────────────────────────────────
 # 🎨 LOAD CSS
@@ -18,7 +18,7 @@ def load_css():
 load_css()
 
 # ─────────────────────────────────────────
-# 🔍 SMART SEARCH (RANKED)
+# 🔍 SMART SEARCH
 # ─────────────────────────────────────────
 def search(query):
     data = [
@@ -62,15 +62,13 @@ def search(query):
         if score > 0:
             scored_results.append((score, item))
 
-    # sort by highest score
     scored_results.sort(reverse=True, key=lambda x: x[0])
-
     results = [item for score, item in scored_results]
 
     return results if results else data
 
 # ─────────────────────────────────────────
-# 🤖 FREE AI (NO API)
+# 🤖 FREE AI
 # ─────────────────────────────────────────
 def generate_ai(query, results):
 
@@ -89,24 +87,36 @@ def generate_ai(query, results):
     return explanation
 
 # ─────────────────────────────────────────
-# 🔥 UI
+# 🔥 UI HEADER
 # ─────────────────────────────────────────
-st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("Smart Search + Free AI (No API Required)")
+st.title("🏗️ BIS Smart Compliance Assistant")
+st.markdown("### 🔍 Find the right BIS standards instantly with smart search + AI insights")
 
 st.divider()
 
-query = st.text_input("Enter product description:")
+# ─────────────────────────────────────────
+# 🔎 INPUT SECTION
+# ─────────────────────────────────────────
+st.markdown("#### 🔎 Enter product / material name")
 
+query = st.text_input("e.g. cement, steel, concrete")
+
+# ─────────────────────────────────────────
+# 🔘 BUTTON ACTION
+# ─────────────────────────────────────────
 if st.button("🚀 Get Recommendations"):
 
     if not query:
-        st.warning("Please enter something")
+        st.warning("⚠️ Please enter something")
 
     else:
         results = search(query)
 
-        # 🔹 SHOW RESULTS
+        # ─────────────────────────────────
+        # 📊 RESULTS SECTION
+        # ─────────────────────────────────
+        st.markdown("## 📊 Recommended Standards")
+
         for r in results:
             st.markdown(f"""
             <div class="card">
@@ -116,8 +126,10 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
-        # 🔹 AI ANALYSIS
-        st.subheader("🤖 AI Expert Analysis")
+        # ─────────────────────────────────
+        # 🤖 AI SECTION
+        # ─────────────────────────────────
+        st.markdown("## 🤖 AI Insights")
 
         answer = generate_ai(query, results)
 
