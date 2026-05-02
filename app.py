@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from google import genai   # ✅ NEW SDK
+from google import genai  
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -74,24 +74,24 @@ def generate_ai(query, context):
         return "❌ API key missing"
 
     try:
+        from google import genai
+
         client = genai.Client(api_key=API_KEY)
 
         response = client.models.generate_content(
             model="gemini-1.5-flash",
             contents=f"""
-You are a civil engineering expert.
-
 User Query: {query}
 
 Relevant BIS Standards:
 {context}
 
-Explain:
+Explain clearly:
 - Why relevant
 - Real-life usage
 - Safety importance
 
-Keep answer short (4-5 lines).
+Keep it short (4-5 lines).
 """
         )
 
@@ -99,7 +99,6 @@ Keep answer short (4-5 lines).
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
-
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
