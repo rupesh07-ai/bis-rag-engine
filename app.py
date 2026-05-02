@@ -33,7 +33,7 @@ load_css()
 # 🔍 TEMP SEARCH FUNCTION (NO FAISS)
 # ─────────────────────────────────────────
 def search(query):
-    return [
+    data = [
         {
             "standard_id": "IS 456",
             "title": "Plain and Reinforced Concrete Code",
@@ -45,9 +45,24 @@ def search(query):
             "title": "High Strength Deformed Steel Bars",
             "scope": "Steel bars for reinforcement",
             "reason": "Used in RCC structures"
+        },
+        {
+            "standard_id": "IS 269",
+            "title": "Ordinary Portland Cement",
+            "scope": "Specification for OPC cement",
+            "reason": "Used in building construction"
         }
     ]
 
+    query = query.lower()
+
+    results = []
+    for item in data:
+        text = (item["title"] + item["scope"]).lower()
+        if query in text:
+            results.append(item)
+
+    return results if results else data
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
