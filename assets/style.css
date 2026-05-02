@@ -1,60 +1,50 @@
-/* 🌑 CLEAN DARK BACKGROUND */
+/* ☀️ LIGHT BACKGROUND */
 .stApp {
-    background-color: #0f172a;
-    color: #e2e8f0;
+    background-color: #f8fafc;
+    color: #1e293b;
 }
 
 /* 🔥 TITLE */
 h1 {
-    color: #ffffff !important;
+    color: #0f172a !important;
     font-weight: 700;
 }
 
-/* 📝 TEXT */
+/* TEXT */
 p, span, div {
-    color: #cbd5f5 !important;
+    color: #334155 !important;
 }
 
-/* 💬 INPUT BOX */
+/* 💬 INPUT */
 input, textarea {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
     border-radius: 8px !important;
-    border: 1px solid #334155 !important;
-    padding: 10px !important;
+    border: 1px solid #cbd5e1 !important;
 }
 
 /* 🔘 BUTTON */
 button {
-    background-color: #6366f1 !important;
+    background-color: #4f46e5 !important;
     color: white !important;
     border-radius: 8px !important;
-    border: none;
-    padding: 8px 16px;
 }
 
-/* 🧊 SIMPLE CARD STYLE */
+/* 🧊 CARDS */
 div[style*="border"] {
-    background-color: #1e293b !important;
-    border: 1px solid #334155 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
-    padding: 12px;
 }
 
-/* 📊 METRIC BOX */
+/* 📊 METRIC */
 [data-testid="stMetric"] {
-    background-color: #1e293b;
+    background-color: #ffffff;
     padding: 12px;
     border-radius: 10px;
 }
 
-/* 📈 CHART AREA */
+/* 📈 CHART */
 canvas {
-    background-color: #1e293b !important;
-    border-radius: 10px;
-}
-
-/* ✨ DIVIDER */
-hr {
-    border-color: #334155;
+    background-color: #ffffff !important;
 }

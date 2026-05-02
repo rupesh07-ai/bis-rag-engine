@@ -3,6 +3,13 @@ import time
 import pandas as pd
 
 st.set_page_config(page_title="BIS Assistant", layout="wide")
+st.markdown("""
+<style>
+body {
+    background-color: #f8fafc;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
 # DATA
