@@ -38,7 +38,7 @@
     position: fixed;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, #6366f1, transparent);
+    background: radial-gradient(circle, #060886, transparent);
     top: 10%;
     left: 10%;
     filter: blur(120px);
@@ -64,7 +64,7 @@
 
 .card:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 0 30px rgba(99,102,241,0.5);
+    box-shadow: 0 0 30px rgba(6, 8, 123, 0.5);
 }
 
 /* 🤖 AI BOX */
