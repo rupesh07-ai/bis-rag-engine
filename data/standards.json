@@ -1,17 +1,20 @@
 [
   {
-    "standard_id": "IS 269",
-    "title": "Ordinary Portland Cement",
-    "scope": "Specification for OPC cement used in construction"
+    "standard_id": "IS 456",
+    "title": "Concrete Code",
+    "scope": "Reinforced concrete",
+    "reason": "Used in construction"
   },
   {
     "standard_id": "IS 1786",
-    "title": "High Strength Deformed Steel Bars",
-    "scope": "Steel bars for reinforcement in concrete"
+    "title": "Steel Bars",
+    "scope": "Reinforcement steel",
+    "reason": "Used in RCC"
   },
   {
-    "standard_id": "IS 456",
-    "title": "Plain and Reinforced Concrete Code",
-    "scope": "Code of practice for reinforced concrete"
+    "standard_id": "IS 269",
+    "title": "Cement",
+    "scope": "OPC cement",
+    "reason": "Used in buildings"
   }
 ]
