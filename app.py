@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 import os
+from openai import OpenAI
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -70,52 +71,30 @@ def search(query):
 # ─────────────────────────────────────────
 def generate_ai(query, context):
 
-    if not API_KEY:
-        return "❌ API key missing"
-
     try:
-        import requests
+        client = OpenAI(api_key=API_KEY)
 
-        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}"
-
-        payload = {
-            "contents": [
-                {
-                    "parts": [
-                        {
-                            "text": f"""
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a civil engineering expert."},
+                {"role": "user", "content": f"""
 User Query: {query}
 
 Relevant BIS Standards:
 {context}
 
-Explain clearly:
+Explain:
 - Why relevant
 - Real-life usage
 - Safety importance
 
 Keep it short (4-5 lines).
-"""
-                        }
-                    ]
-                }
+"""}
             ]
-        }
+        )
 
-        headers = {"Content-Type": "application/json"}
-
-        response = requests.post(url, json=payload, headers=headers)
-        result = response.json()
-
-        # ✅ SAFE PARSE
-        if "candidates" in result:
-            return result["candidates"][0]["content"]["parts"][0]["text"]
-
-        elif "error" in result:
-            return f"❌ API ERROR: {result['error']['message']}"
-
-        else:
-            return f"❌ Unexpected response: {result}"
+        return response.choices[0].message.content
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
