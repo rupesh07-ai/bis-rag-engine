@@ -9,14 +9,17 @@ st.set_page_config(page_title="BIS Assistant", layout="wide", page_icon="🏗️
 # ─────────────────────────────────────────
 # 🎨 LOAD CSS
 # ─────────────────────────────────────────
-def load_css():
-    try:
-        with open("assets/style.css") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except:
-        pass
-
-load_css()
+st.markdown("""
+<div class="code-bg">
+while(True):
+    analyze_data()
+    check_compliance()
+    ensure_safety()
+    optimize_materials()
+    BIS_engine.run()
+    print("Processing...")
+</div>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
 # 🌌 BACKGROUND (Particles + Grid)

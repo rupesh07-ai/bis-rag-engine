@@ -1,42 +1,112 @@
-/* 🌌 PARTICLES ANIMATION */
-.particles {
+/* 🌌 BACKGROUND GRADIENT ANIMATION */
+.stApp {
+    background: linear-gradient(-45deg, #020617, #0f172a, #1e293b, #020617);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    color: #e2e8f0;
+}
+
+/* 🌊 GRADIENT FLOW */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 💻 CODE SCROLL BACKGROUND */
+.code-bg {
     position: fixed;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
+    font-size: 12px;
+    color: rgba(99,102,241,0.08);
+    font-family: monospace;
+    white-space: pre;
+    pointer-events: none;
     z-index: -1;
-    overflow: hidden;
+    animation: scrollCode 25s linear infinite;
 }
 
-.particles span {
-    position: absolute;
-    display: block;
-    width: 6px;
-    height: 6px;
-    background: #6366f1;
-    border-radius: 50%;
-    animation: moveParticles 20s linear infinite;
-    opacity: 0.6;
+@keyframes scrollCode {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100%); }
 }
 
-@keyframes moveParticles {
-    from {
-        transform: translateY(100vh) scale(0);
-    }
-    to {
-        transform: translateY(-10vh) scale(1);
-    }
-}
-
-/* 💡 GRID OVERLAY */
-.grid-bg {
+/* 💫 FLOATING GLOW ORBS */
+.stApp::before {
+    content: "";
     position: fixed;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        linear-gradient(rgba(148,163,184,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148,163,184,0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #6366f1, transparent);
+    top: 10%;
+    left: 10%;
+    filter: blur(120px);
+    animation: floatGlow 6s ease-in-out infinite;
     z-index: -2;
+}
+
+@keyframes floatGlow {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(40px); }
+    100% { transform: translateY(0); }
+}
+
+/* ✨ GLASS CARDS */
+.card {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 20px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 0 30px rgba(99,102,241,0.5);
+}
+
+/* 🤖 AI BOX */
+.ai-box {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 14px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    animation: aiGlow 3s infinite alternate;
+}
+
+@keyframes aiGlow {
+    from { box-shadow: 0 0 10px rgba(139,92,246,0.3); }
+    to { box-shadow: 0 0 30px rgba(139,92,246,0.6); }
+}
+
+/* 🔘 BUTTON */
+.stButton > button {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white !important;
+    border-radius: 12px;
+    font-weight: bold;
+    padding: 10px 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0px rgba(99,102,241,0.4); }
+    50% { box-shadow: 0 0 20px rgba(99,102,241,0.8); }
+    100% { box-shadow: 0 0 0px rgba(99,102,241,0.4); }
+}
+
+/* ✨ INPUT */
+input {
+    background: rgba(30, 41, 59, 0.6) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155 !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(10px);
+}
+
+/* TEXT */
+body, p, span, div {
+    color: #e2e8f0 !important;
 }
