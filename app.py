@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import google.generativeai as genai
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -25,12 +26,12 @@ def load_css():
         with open("assets/style.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except:
-        st.warning("CSS not loaded")
+        pass
 
 load_css()
 
 # ─────────────────────────────────────────
-# 🔍 TEMP SEARCH FUNCTION (NO FAISS)
+# 🔍 SEARCH (simple)
 # ─────────────────────────────────────────
 def search(query):
     data = [
@@ -55,24 +56,56 @@ def search(query):
     ]
 
     query = query.lower()
-
     results = []
+
     for item in data:
         text = (item["title"] + item["scope"]).lower()
         if query in text:
             results.append(item)
 
     return results if results else data
+
+
+# ─────────────────────────────────────────
+# 🤖 AI FUNCTION
+# ─────────────────────────────────────────
+def generate_ai(query, context):
+
+    if not API_KEY:
+        return "❌ API key missing"
+
+    try:
+        genai.configure(api_key=API_KEY)
+
+        model = genai.GenerativeModel("gemini-pro")
+
+        response = model.generate_content(f"""
+You are a civil engineering expert.
+
+User Query: {query}
+
+Relevant BIS Standards:
+{context}
+
+Explain:
+- Why relevant
+- Real-life usage
+- Safety importance
+
+Keep answer short (4-5 lines).
+""")
+
+        return response.text
+
+    except Exception as e:
+        return f"❌ ERROR: {str(e)}"
+
+
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("Stable Version (FAISS Disabled)")
-
-if not API_KEY:
-    st.warning("⚠️ API key optional (AI disabled)")
-else:
-    st.success("✅ API Key Loaded")
+st.caption("AI Enabled Version")
 
 st.divider()
 
@@ -86,7 +119,7 @@ if st.button("🚀 Get Recommendations"):
     else:
         results = search(query)
 
-        # 🔹 SHOW RESULTS
+        # 🔹 show cards
         for r in results:
             st.markdown(f"""
             <div class="card">
@@ -96,6 +129,15 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
-        # 🔹 AI DISABLED
+        # 🔹 AI PART
         st.subheader("🤖 AI Expert Analysis")
-        st.success("AI temporarily disabled (app stable now)")
+
+        context = "\n".join([
+            f"{r['standard_id']} ({r['title']}): {r['scope']}"
+            for r in results
+        ])
+
+        with st.spinner("Generating AI response..."):
+            answer = generate_ai(query, context)
+
+        st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
