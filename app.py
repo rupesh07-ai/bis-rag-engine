@@ -8,15 +8,21 @@ st.set_page_config(page_title="BIS Assistant", layout="wide", page_icon="🏗️
 # ─────────────────────────────────────────
 # 🎨 LOAD CSS
 # ─────────────────────────────────────────
-def load_css():
-    try:
-        with open("assets/style.css") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except:
-        pass
+st.markdown("""
+<div class="grid-bg"></div>
 
-load_css()
-
+<div class="particles">
+    <span style="left:10%; animation-duration:18s;"></span>
+    <span style="left:20%; animation-duration:22s;"></span>
+    <span style="left:30%; animation-duration:25s;"></span>
+    <span style="left:40%; animation-duration:20s;"></span>
+    <span style="left:50%; animation-duration:19s;"></span>
+    <span style="left:60%; animation-duration:23s;"></span>
+    <span style="left:70%; animation-duration:21s;"></span>
+    <span style="left:80%; animation-duration:24s;"></span>
+    <span style="left:90%; animation-duration:26s;"></span>
+</div>
+""", unsafe_allow_html=True)
 # ─────────────────────────────────────────
 # 🔍 SMART SEARCH
 # ─────────────────────────────────────────
@@ -90,19 +96,17 @@ def generate_ai(query, results):
 # 🌑 HEADER (DARK MODE STYLE)
 # ─────────────────────────────────────────
 st.markdown("""
-<h1 style='text-align: center;
-color: #a5b4fc;
-animation: fadeIn 2s ease-in-out;
-text-shadow: 0 0 20px rgba(99,102,241,0.7);'>
-🏗️ BIS Smart Compliance Assistant
-</h1>
-
-<style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>
+<div style='
+text-align:center;
+margin-top:20px;
+margin-bottom:30px;
+color:#94a3b8;
+font-size:18px;
+animation: fadeIn 2s;
+'>
+⚡ Smart BIS recommendation engine powered by intelligent search<br>
+🚀 Built for engineers, builders & compliance professionals
+</div>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
