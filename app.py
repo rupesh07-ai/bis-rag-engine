@@ -74,6 +74,8 @@ def generate_ai(query, context):
         return "❌ API key missing"
 
     try:
+        import requests
+
         url = f"https://generativelanguage.googleapis.com/v1beta/models/text-bison-001:generateText?key={API_KEY}"
 
         payload = {
@@ -99,7 +101,15 @@ Keep it short (4-5 lines).
         response = requests.post(url, json=payload, headers=headers)
         result = response.json()
 
-        return result["candidates"][0]["output"]
+        # 🔥 SAFE HANDLING
+        if "candidates" in result:
+            return result["candidates"][0].get("output", "No output")
+
+        elif "error" in result:
+            return f"❌ API ERROR: {result['error']['message']}"
+
+        else:
+            return f"❌ Unexpected response: {result}"
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
