@@ -1,6 +1,7 @@
+import requests
 import streamlit as st
 import os
-from google import genai  
+from google import genai
 
 # ─────────────────────────────────────────
 # 🔐 API KEY
@@ -74,28 +75,34 @@ def generate_ai(query, context):
         return "❌ API key missing"
 
     try:
-        from google import genai
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/text-bison-001:generateText?key={API_KEY}"
 
-        client = genai.Client(api_key=API_KEY)
-
-        response = client.models.generate_content(
-            model="gemini-1.5-flash-latest",  # ✅ FIXED
-            contents=f"""
+        payload = {
+            "prompt": {
+                "text": f"""
 User Query: {query}
 
 Relevant BIS Standards:
 {context}
 
-Explain clearly:
+Explain:
 - Why relevant
 - Real-life usage
 - Safety importance
 
-Keep it short (4-5 lines).
+Keep answer short (4-5 lines).
 """
-        )
+            }
+        }
 
-        return response.text
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        result = response.json()
+
+        return result["candidates"][0]["output"]
 
     except Exception as e:
         return f"❌ ERROR: {str(e)}"
