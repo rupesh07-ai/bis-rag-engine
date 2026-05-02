@@ -79,7 +79,7 @@ def generate_ai(query, context):
         client = genai.Client(api_key=API_KEY)
 
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-1.5-flash-latest",  # ✅ FIXED
             contents=f"""
 User Query: {query}
 
