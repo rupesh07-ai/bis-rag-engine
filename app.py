@@ -1,18 +1,5 @@
-import requests
 import streamlit as st
 import os
-from openai import OpenAI
-
-# ─────────────────────────────────────────
-# 🔐 API KEY
-# ─────────────────────────────────────────
-def get_api_key():
-    try:
-        return st.secrets["GEMINI_API_KEY"]
-    except:
-        return os.getenv("GEMINI_API_KEY")
-
-API_KEY = get_api_key()
 
 # ─────────────────────────────────────────
 # 🔥 PAGE CONFIG
@@ -67,42 +54,29 @@ def search(query):
     return results if results else data
 
 # ─────────────────────────────────────────
-# 🤖 AI FUNCTION (NEW SDK)
+# 🤖 FREE AI (NO API)
 # ─────────────────────────────────────────
-def generate_ai(query, context):
+def generate_ai(query, results):
 
-    try:
-        client = OpenAI(api_key=API_KEY)
+    if not results:
+        return "No relevant standards found."
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a civil engineering expert."},
-                {"role": "user", "content": f"""
-User Query: {query}
+    explanation = f"🔍 Based on your input '{query}', the following BIS standards are important:\n\n"
 
-Relevant BIS Standards:
-{context}
+    for r in results:
+        explanation += f"• {r['standard_id']} ({r['title']}):\n"
+        explanation += f"  - Used for: {r['scope']}\n"
+        explanation += f"  - Importance: {r['reason']}\n\n"
 
-Explain:
-- Why relevant
-- Real-life usage
-- Safety importance
+    explanation += "📌 These standards ensure safety, strength, and quality in construction materials and structures."
 
-Keep it short (4-5 lines).
-"""}
-            ]
-        )
+    return explanation
 
-        return response.choices[0].message.content
-
-    except Exception as e:
-        return f"❌ ERROR: {str(e)}"
 # ─────────────────────────────────────────
 # 🔥 UI
 # ─────────────────────────────────────────
 st.title("🏗️ AI-Powered BIS Compliance Assistant")
-st.caption("AI Enabled Version 🚀")
+st.caption("Free AI Version (No API Required)")
 
 st.divider()
 
@@ -116,6 +90,7 @@ if st.button("🚀 Get Recommendations"):
     else:
         results = search(query)
 
+        # 🔹 SHOW RESULTS
         for r in results:
             st.markdown(f"""
             <div class="card">
@@ -125,14 +100,9 @@ if st.button("🚀 Get Recommendations"):
             </div>
             """, unsafe_allow_html=True)
 
+        # 🔹 AI ANALYSIS (FREE)
         st.subheader("🤖 AI Expert Analysis")
 
-        context = "\n".join([
-            f"{r['standard_id']} ({r['title']}): {r['scope']}"
-            for r in results
-        ])
-
-        with st.spinner("Generating AI response..."):
-            answer = generate_ai(query, context)
+        answer = generate_ai(query, results)
 
         st.markdown(f'<div class="ai-box">{answer}</div>', unsafe_allow_html=True)
